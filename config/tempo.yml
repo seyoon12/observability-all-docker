@@ -1,0 +1,76 @@
+stream_over_http_enabled: true  # HTTP를 통한 데이터 스트리밍 활성화
+
+server:
+  http_listen_port: 3200  # Tempo HTTP 서버 포트
+  grpc_listen_port: 9095  # gRPC 서버 포트
+  http_tls_config:
+    client_auth_type: VerifyClientCertIfGiven  # 클라이언트 인증서 검증 (있으면 확인)
+    client_ca_file: /etc/ssl/certs/rootca.crt  # 클라이언트 CA 인증서 경로
+
+distributor:
+  receivers:
+    otlp:  # OpenTelemetry(OTLP) 수집기 활성화
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318  # OTLP HTTP 수집 포트
+
+ingester:
+  max_block_duration: 5m  # 5분 동안 수집된 데이터를 하나의 블록으로 묶음
+
+memberlist:
+  abort_if_cluster_join_fails: false  # 클러스터 조인 실패 시 프로세스 중단 방지
+  bind_port: 7946  # 클러스터 통신을 위한 포트
+  join_members:
+    - tempo-distributor:7946
+    - tempo-ingester-0:7946
+    - tempo-ingester-1:7946
+    - tempo-ingester-2:7946
+    - tempo-ingester-3:7946
+    - tempo-ingester-4:7946
+    - tempo-ingester-5:7946
+
+compactor:
+  compaction:
+    block_retention: 1h  # 수집된 블록의 보존 기간 (1시간)
+
+querier:
+  frontend_worker:
+    frontend_address: tempo-query-frontend:9095  # 프론트엔드 주소
+
+query_frontend:
+  max_batch_size: 100  # 한 번에 처리할 최대 쿼리 개수
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /var/tempo/generator/wal  # 메트릭 저장 경로
+    remote_write:
+      - url: https://example-ip:441/api/v1/write  # Prometheus 등으로 메트릭 전송
+        send_exemplars: true  # Exemplar(샘플 데이터) 전송 활성화
+
+storage:
+  trace:
+    blocklist_poll: 2s  # 2초마다 블록 목록 갱신
+    backend: s3  # S3 기반 스토리지 사용
+    s3:
+      bucket: tempo
+      endpoint: nginx-1:448  # S3 API 엔드포인트
+      access_key: ${S3_ACCESS_KEY}  # 환경변수 사용 (보안 강화)
+      secret_key: ${S3_SECRET_KEY}  # 환경변수 사용 (보안 강화)
+      region: null
+      insecure: false  # HTTPS 사용
+      tls_cert_path: /etc/public.crt  # TLS 인증서 경로
+      tls_key_path: /etc/private.np.key  # TLS 개인 키 경로
+      tls_ca_path: /etc/ssl/certs/rootca.crt  # CA 인증서 경로
+    wal:
+      path: /var/tempo/wal  # Write-Ahead Log 저장 경로
+    local:
+      path: /var/tempo/blocks  # 로컬 블록 저장 경로
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: ['service-graphs', 'span-metrics']  # 서비스 그래프 및 스팬 메트릭 처리 활성화
