@@ -1,0 +1,152 @@
+groups:
+- name: node_exporter_alerts
+  rules:
+  - alert: EXAMPLE-SCH Down
+    expr: up{hostname="EXAMPLE-SCH"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-SSO Down
+    expr: up{hostname="EXAMPLE-SSO"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-CONV Down
+    expr: up{hostname="EXAMPLE-CONV"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE_webhwp Down
+    expr: up{hostname="EXAMPLE_webhwp"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-SYS Down
+    expr: up{hostname="EXAMPLE-SYS"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-APP_develop Down
+    expr: up{hostname="EXAMPLE-APP_develop"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE_cicd Down
+    expr: up{hostname="EXAMPLE_cicd"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-APP-DEVELOP Down
+    expr: up{hostname="EXAMPLE-APP-DEVELOP"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-DB_cipher Down
+    expr: up{hostname="EXAMPLE-DB_cipher"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-APP01 Down
+    expr: up{hostname="EXAMPLE-APP01"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-dbms04 Down
+    expr: up{hostname="EXAMPLE-dbms04"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-dbms03 Down
+    expr: up{hostname="EXAMPLE-dbms03"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE_dbms01 Down
+    expr: up{hostname="EXAMPLE_dbms01"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: EXAMPLE-dbms02 Down
+    expr: up{hostname="EXAMPLE-dbms"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "{{ $labels.hostname }}이 응답하지 않습니다. 서버 상태를 확인하십시오"
+
+  - alert: HighCpuUsage
+    expr: (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "CPU 사용률 80프로 이상입니다. (instance {{ $labels.instance }})"
+
+  - alert: HighMemoryUsage
+    expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "메모리 사용률 90프로 이상입니다. (instance {{ $labels.instance }})"
+
+  - alert: HostOutOfDiskSpace
+    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 20 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "디스크의 용량이 10프로 미만으로 남았습니다."
