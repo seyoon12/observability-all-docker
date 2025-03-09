@@ -1,0 +1,72 @@
+server:
+  http_listen_port: 9080  # Promtail의 HTTP 서버가 수신할 포트
+  grpc_listen_port: 0      # 고객의 요청으로 인해 https 포트 수신 필수      
+
+positions:
+  filename: /positions.yaml  # 로그 수집 위치를 저장하는 파일 (재시작 시 중복 수집 방지)
+
+clients:
+  - url: https://inser-ip:442/api/prom/push  # Loki로 로그 전송할 엔드포인트
+    tls_config:
+      cert_file: /etc/promtail/public.crt   # 클라이언트 인증서 (TLS 사용 시 필요)
+      key_file: /etc/promtail/private.np.key  # 개인 키 파일
+      ca_file: /usr/local/share/ca-certificates/rootca.crt  # CA 인증서 (서버 신뢰성 검증)
+
+scrape_configs:
+  - job_name: syslog
+    static_configs:
+      - targets:
+          - localhost  # 로컬 로그 수집
+        labels:
+          job: insert-ip-log  # 로그 식별을 위한 job 라벨
+          __path__: /var/log/messages  # 수집할 로그 파일 경로
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z) (?P<level>\w+) (?P<message>.*)'
+          # 로그에서 timestamp, level, message를 추출
+      - labels:
+          filename: '/var/log/{{.hostname}}-{{.timestamp | formatTimestamp "2006-01-02"}}.log'
+          # 로그 파일을 날짜별로 정리하여 저장
+
+  - job_name: journal
+    journal:
+      max_age: 12h  # 최근 12시간 동안의 로그만 수집
+      labels:
+        job: insert-ip-journal  # 로그 식별을 위한 job 라벨
+    relabel_configs:
+      - source_labels: ["__journal__systemd_unit"]
+        target_label: "systemd_unit"  # systemd 서비스 이름을 라벨로 추가
+      - source_labels: ["__journal__hostname"]
+        target_label: "nodename"  # 호스트 이름을 라벨로 추가
+      - source_labels: ["__journal_syslog_identifier"]
+        target_label: "syslog_identifier"  # syslog 식별자를 라벨로 추가
+
+  - job_name: window-example-syslog
+    static_configs:
+      - targets:
+          - localhost  # 로컬 로그 수집
+        labels:
+          job: example-log  # 윈도우 서버 로그 식별을 위한 job 라벨
+          __path__: /var/log/windows/example.log  # 윈도우 로그 파일 경로
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z) (?P<level>\w+) (?P<message>.*)'
+          # 로그에서 timestamp, level, message를 추출
+      - labels:
+          filename: '/var/log/{{.hostname}}-{{.timestamp | formatTimestamp "2006-01-02"}}.log'
+          # 로그 파일을 날짜별로 정리하여 저장
+
+  - job_name: window-example-syslog
+    static_configs:
+      - targets:
+          - localhost  # 로컬 로그 수집
+        labels:
+          job: example-log  # 윈도우 서버 로그 식별을 위한 job 라벨
+          __path__: /var/log/windows/example.log  # 윈도우 로그 파일 경로
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z) (?P<level>\w+) (?P<message>.*)'
+          # 로그에서 timestamp, level, message를 추출
+      - labels:
+          filename: '/var/log/{{.hostname}}-{{.timestamp | formatTimestamp "2006-01-02"}}.log'
+          # 로그 파일을 날짜별로 정리하여 저장
