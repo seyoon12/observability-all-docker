@@ -344,6 +344,18 @@ services:
     - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
     - ./config/blackbox/web.yml:/etc/config/web.yml
 
+  mysqld_exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld
+    command:
+     - "--mysqld.username=${MYSQL_USER}:${MYSQL_PASSWORD}"
+     - "--mysqld.address=${MYSQL_HOST}:${MYSQL_PORT}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/lib/mysql/mysql.sock:/tmp/mysql.sock
+    ports:
+      - "9104:9104"
+
 volumes:
   tempo-data:
   grafana-data:
