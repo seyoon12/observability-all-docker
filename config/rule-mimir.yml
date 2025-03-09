@@ -1,0 +1,62 @@
+groups:
+- name: mimir_container_alerts
+  rules:
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="mimir1"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="mimir1"} / container_spec_memory_limit_bytes{name="mimir1"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
+
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="mimir2"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="mimir2"} / container_spec_memory_limit_bytes{name="mimir2"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
+
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="mimir3"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="mimir3"} / container_spec_memory_limit_bytes{name="mimir3"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: mimir-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
