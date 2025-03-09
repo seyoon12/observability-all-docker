@@ -1,0 +1,18 @@
+modules:
+  http_2xx:
+    prober: http
+    timeout: 10s
+
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: []
+      method: GET 
+      no_follow_redirects: false
+      fail_if_ssl: false  # SSL 사용 시 실패
+      fail_if_not_ssl: false  # HTTPS가 아닌 경우 실패
+
+      preferred_ip_protocol: ip4 
+      ip_protocol_fallback: false
+
+      tls_config:
+        insecure_skip_verify: false
