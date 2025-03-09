@@ -1,0 +1,74 @@
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /:/rootfs:ro
+      - ./config/ca/:/etc/tls/
+      - ./config/node-exporter/web.yml:/etc/config/web.yml
+    command:
+
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.config.file=/etc/config/web.yml'
+    ports:
+      - 9100:9100
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:latest
+    command: ["-config.file=/etc/promtail/config.yml","-config.expand-env=true"]
+    volumes:
+      - /var/log:/var/log
+      - /var/log/journal/:/var/log/journal/
+      - /run/log/journal/:/run/log/journal/
+      - /etc/machine-id:/etc/machine-id
+      - ./config/promtail/promtail.yml:/etc/promtail/config.yml
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/ca/public.crt:/etc/promtail/public.crt
+      - ./config/ca/private.np.key:/etc/promtail/private.np.key
+      - ./config/ca/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+    ports:
+      - 1514:1514/udp
+
+  fluentd:
+    image: fluentd:latest
+    container_name: flu
+    volumes:
+      - /var/log:/var/host/log
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/fluentd/fluent.conf:/fluentd/etc/fluent.conf
+      - ./config/ca/public.crt:/fluentd/etc/public.crt
+      - ./config/ca/private.np.key:/fluentd/etc/private.np.key
+      - ./config/ca/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+    command: >
+      /bin/sh -c "
+        update-ca-certificates &&
+        exec fluentd -c /fluentd/etc/fluent.conf"
+    ports:
+      - "24224:24224"
+
+  otelcol:
+    image: otel/opentelemetry-collector:0.99.0
+    container_name: otel-col
+    command: [ "--config=/etc/otelcol.yml", "--config=/etc/config-extras.yml" ]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/otelcol/otelcol.yml:/etc/otelcol.yml
+      - ./config/otelcol/config-extras.yml:/etc/config-extras.yml
+      - ./config/ca/public.crt:/etc/public.crt
+      - ./config/ca/private.np.key:/etc/private.np.key
+      - ./config/ca/rootca.crt:/etc/ssl/certs/rootca.crt
+    environment:
+      - OTLP_TLS_CA=/etc/ssl/certs/rootca.crt
+      - OTLP_TLS_CERT=:/etc/public.crt
+      - OTLP_TLS_KEY=:/etc/private.np.key
+    ports:
+      - "4317:4317"     # OTLP over gRPC receiver
+      - "4318:4318"     # OTLP over HTTP receiver
