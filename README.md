@@ -1,4 +1,6 @@
 # Docker Observability Stack
+TEMPO, LOKI,MIMIR, MINIO 등 분산 아키텍처로 구성하여 데이터 복제 및 장애 조치를 지원합니다.
+로그의 수집, 저장, 조회, 역할을 개별적으로 분리하여 부하를 효과적으로 분산하고 특정 컴포넌트에 과부화가 집중되지 않으며 확장성 있게 설계되었습니다.
 
 ### includes:
 - **Prometheus**
@@ -17,6 +19,9 @@
 - **blackbox**
 - **open-telemetry-collector**
 - **open-telemetry-collector**
+
+### 참고 사항
+기존에 사용했던 config와 동일하게 작성 시 해당 아키텍처의 중요 데이터 (예시: IP, API KEY) 등이 노출되기에 수정하였습니다.
 
 ### Distributed 구조
 <img src="https://github.com/user-attachments/assets/d21aa0fa-5f99-40f7-a26f-4883fd164dd1" width="1200">
