@@ -1,0 +1,166 @@
+<source>
+  @type tail
+  path /var/host/log/messages  # 시스템 메시지 로그 파일
+  pos_file /var/host/log/messages.pos  # 중복 로그 방지를 위한 위치 저장 파일
+  @id input_messages
+  tag messages
+  <parse>
+    @type none  # 로그 파싱 없이 원본 그대로 저장
+  </parse>
+</source>
+
+<source>
+  @type tail
+  path /var/host/log/secure  # 보안 관련 로그 파일
+  pos_file /var/host/log/secure.pos
+  @id input_secure
+  tag secure
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<source>
+  @type tail
+  path /var/host/log/observe/wtmp.txt  # 사용자 로그인 기록 (wtmp)
+  pos_file /var/host/log/wtmp.pos
+  @id input_wtmp
+  tag wtmp
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<source>
+  @type tail
+  path /var/host/log/observe/btmp.txt  # 로그인 실패 기록 (btmp)
+  pos_file /var/host/log/btmp.pos
+  @id input_btmp
+  tag btmp
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<source>
+  @type tail
+  path /var/host/log/windows/example-ip-1  # Windows 서버 1의 로그 파일
+  pos_file /var/host/log/windows/example-ip-1.pos
+  @id input_windows_example_ip_1
+  tag windows_example_ip_1
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<source>
+  @type tail
+  path /var/host/log/windows/example-ip-2  # Windows 서버 2의 로그 파일
+  pos_file /var/host/log/windows/example-ip-2.pos
+  @id input_windows_example_ip_2
+  tag windows_example_ip_2
+  <parse>
+    @type none
+  </parse>
+</source>
+
+<match messages>
+  @type s3
+  s3_endpoint https://example-ip:449  # S3 호환 스토리지 (MinIO 등)
+  s3_bucket log
+  s3_force_path_style true
+  aws_key_id ${AWS_ACCESS_KEY_ID}  # 환경변수로 보안 강화
+  aws_sec_key ${AWS_SECRET_ACCESS_KEY}  # 환경변수로 보안 강화
+  s3_region null
+  s3_object_key_format "/%Y-%m-%d/${myip}/messages-%H-%{uuid_flush}%{tag}.gz"
+  time_slice_format %y%m%d%H
+  time_slice_wait 1m
+  scheme https
+  cert_path /fluentd/etc/public.crt  # TLS 인증서 사용
+  private_key_path /fluentd/etc/private.np.key
+
+  <buffer>
+    @type memory  # 메모리 버퍼 사용 (디스크 저장 가능)
+    flush_mode interval
+    flush_interval 1h  # 1시간마다 업로드
+    flush_thread_count 2
+    retry_max_interval 30
+    overflow_action block
+  </buffer>
+</match>
+
+<match secure>
+  @type s3
+  s3_endpoint https://example-ip:449
+  s3_bucket log
+  s3_force_path_style true
+  aws_key_id ${AWS_ACCESS_KEY_ID}
+  aws_sec_key ${AWS_SECRET_ACCESS_KEY}
+  s3_region null
+  s3_object_key_format "/%Y-%m-%d/${myip}/secure-%H-%{uuid_flush}%{tag}.gz"
+  time_slice_format %y%m%d%H
+  time_slice_wait 1m
+  scheme https
+  cert_path /fluentd/etc/public.crt
+  private_key_path /fluentd/etc/private.np.key
+
+  <buffer>
+    @type memory
+    flush_mode interval
+    flush_interval 1h
+    flush_thread_count 2
+    retry_max_interval 30
+    overflow_action block
+  </buffer>
+</match>
+
+# 📌 Windows 로그 저장 (Example IP 사용)
+<match windows_example_ip_1>
+  @type s3
+  s3_endpoint https://example-ip:449
+  s3_bucket log
+  s3_force_path_style true
+  aws_key_id ${AWS_ACCESS_KEY_ID}
+  aws_sec_key ${AWS_SECRET_ACCESS_KEY}
+  s3_region null
+  s3_object_key_format "/%Y-%m-%d/example-ip-1/windows-%H-%{uuid_flush}%{tag}.gz"
+  time_slice_format %y%m%d%H
+  time_slice_wait 1m
+  scheme https
+  cert_path /fluentd/etc/public.crt
+  private_key_path /fluentd/etc/private.np.key
+
+  <buffer>
+    @type memory
+    flush_mode interval
+    flush_interval 1h
+    flush_thread_count 2
+    retry_max_interval 30
+    overflow_action block
+  </buffer>
+</match>
+
+<match windows_example_ip_2>
+  @type s3
+  s3_endpoint https://example-ip:449
+  s3_bucket log
+  s3_force_path_style true
+  aws_key_id ${AWS_ACCESS_KEY_ID}
+  aws_sec_key ${AWS_SECRET_ACCESS_KEY}
+  s3_region null
+  s3_object_key_format "/%Y-%m-%d/example-ip-2/windows-%H-%{uuid_flush}%{tag}.gz"
+  time_slice_format %y%m%d%H
+  time_slice_wait 1m
+  scheme https
+  cert_path /fluentd/etc/public.crt
+  private_key_path /fluentd/etc/private.np.key
+
+  <buffer>
+    @type memory
+    flush_mode interval
+    flush_interval 1h
+    flush_thread_count 2
+    retry_max_interval 30
+    overflow_action block
+  </buffer>
+</match>
