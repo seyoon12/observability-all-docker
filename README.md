@@ -21,10 +21,8 @@ TEMPO, LOKI,MIMIR, MINIO 등 분산 아키텍처로 구성하여 데이터 복�
 - **open-telemetry-collector**
 
 ### 참고 사항
-1. 기존에 사용했던 config와 동일하게 작성 시 해당 아키텍처의 중요 데이터 (예시: IP, API KEY) 등이 노출되기에 수정하였습니다.
-2. AUTO-SCALE을 하기 위한 FLASK 코드는 제거하였습니다.
-3. DASHBOARD JSON은 추가하지 않았습니다.
-4. POSTFIX나 RSYSLOG 설정 등은 추가하지 않았습니다.
+기존에 사용했던 config와 동일하게 작성 시 해당 아키텍처의 중요 데이터 (예시: IP, API KEY) 등이 노출되기에 수정하였습니다.
+
 
 ### Distributed 구조
 <img src="https://github.com/user-attachments/assets/d21aa0fa-5f99-40f7-a26f-4883fd164dd1" width="1200">
