@@ -28,6 +28,6 @@ This setup includes:
 ```sh
 git clone https://github.com/your-username/docker-observability.git
 cd docker-observability
-`
+```
 
 <img src="https://github.com/user-attachments/assets/4d1bf6e9-1fe3-4da6-ae00-24763f8348e5" width="600">
