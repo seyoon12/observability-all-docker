@@ -1,0 +1,7 @@
+#MinIo CLI 설치 (OPTIONAL)
+yum install wget
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+sudo mv mc /usr/local/bin/
+cd /usr/local/bin/
+./mc
