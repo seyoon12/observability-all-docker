@@ -1,0 +1,101 @@
+groups:
+- name: service_alerts
+  rules:
+  - alert: 사용자 인증 서비스 Down
+    expr: up{hostname="Auth_Service"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "사용자 인증 서비스(Auth_Service)가 10분간 중단되었습니다."
+
+  - alert: 결제 시스템 Down
+    expr: up{hostname="Payment_Service"} == 0
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "결제 시스템(Payment_Service)이 10분간 중단되었습니다."
+
+  - alert: 주문 처리 서비스 Down
+    expr: up{hostname="Order_Service"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "주문 처리 서비스(Order_Service)가 10분간 중단되었습니다."
+
+  - alert: 데이터베이스 서버 Down
+    expr: up{hostname="Database_Service"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "데이터베이스 서비스(Database_Service)가 5분간 중단되었습니다."
+
+  - alert: 로그 수집 시스템 Down
+    expr: up{hostname="Log_Collector"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "로그 수집 시스템(Log_Collector)이 10분간 중단되었습니다."
+
+  - alert: API Gateway Down
+    expr: up{hostname="API_Gateway"} == 0
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "API Gateway 서비스가 10분간 중단되었습니다."
+
+  - alert: 파일 저장소 Down
+    expr: up{hostname="File_Storage"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "파일 저장소(File_Storage) 서비스가 10분간 중단되었습니다."
+
+  - alert: 캐시 서버 Down
+    expr: up{hostname="Cache_Service"} == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "캐시 서버(Cache_Service)가 5분간 중단되었습니다."
+
+  - alert: 메시지 큐 Down
+    expr: up{hostname="Message_Queue"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "메시지 큐(Message_Queue) 서비스가 10분간 중단되었습니다."
+
+  - alert: 대시보드 서비스 Down
+    expr: up{hostname="Dashboard_Service"} == 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "대시보드 서비스(Dashboard_Service)가 10분간 중단되었습니다."
+
+  - alert: 이메일 발송 서비스 Down
+    expr: up{hostname="Email_Service"} == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      title: "{{ $labels.hostname }} 다운"
+      description: "이메일 발송 서비스(Email_Service)가 5분간 중단되었습니다."
