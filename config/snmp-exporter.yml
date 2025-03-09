@@ -1,0 +1,475 @@
+auths:
+  public_v1:
+    version: 1
+    community: public
+    security_level: noAuthNoPriv
+  public_v2:
+    version: 2
+    community: public
+    security_level: noAuthNoPriv
+
+modules:
+  network:  # The module name. You can have as many modules as you want.
+    get:
+    - 1.3.6.1.2.1.1.3.0
+    walk:
+    - 1.3.6.1.2.1.2
+    - 1.3.6.1.2.1.31.1.1
+    - 1.3.6.1.2.1.25.3.3.1.2 # ssCpuSystem
+    - 1.3.6.1.2.1.31.1.1.1.1 # ifName
+    - 1.3.6.1.4.1.9.9.109.1.1.1.1.6 # ssCpuUser
+    - 1.3.6.1.2.1.1.3    # sysUpTime: 시스템이 재시작된 이후 경과 시간
+    - 1.3.6.1.4.1.9.9.109.1.1.1.1.5    # cpmCPUTotal5min: 5분 동안의 CPU 사용률
+    - 1.3.6.1.4.1.9.9.48.1.1.1.2    # ciscoMemoryPoolName: 메모리 풀의 이름
+    - 1.3.6.1.4.1.9.9.48.1.1.1.5    # ciscoMemoryPoolUsed: 사용된 메모리 양
+    - 1.3.6.1.4.1.9.9.48.1.1.1.6    # ciscoMemoryPoolFree: 사용 가능한 메모리 양
+    - 1.3.6.1.2.1.2.2.1.1    # ifIndex: 인터페이스 인덱스
+    - 1.3.6.1.2.1.2.2.1.2    # ifDescr: 인터페이스 설명
+    - 1.3.6.1.2.1.2.2.1.3    # ifType: 인터페이스 타입
+    - 1.3.6.1.2.1.2.2.1.5    # ifSpeed: 인터페이스 속도
+    - 1.3.6.1.2.1.2.2.1.7    # ifAdminStatus: 인터페이스 관리 상태
+    - 1.3.6.1.2.1.2.2.1.8    # ifOperStatus: 인터페이스 운영 상태
+    - 1.3.6.1.2.1.2.2.1.10    # ifInOctets: 수신 바이트 수
+    - 1.3.6.1.2.1.2.2.1.16    # ifOutOctets: 송신 바이트 수
+    - 1.3.6.1.4.1.9.9.13.1.3.1.3    # ciscoEnvMonTemperatureStatusValue: 온도 센서 값
+    - 1.3.6.1.4.1.9.9.13.1.4.1.2    # ciscoEnvMonFanState: 팬 상태
+    - 1.3.6.1.4.1.9.9.13.1.5.1.2    # ciscoEnvMonSupplyState: 전원 공급 상태
+    - 1.3.6.1.2.1.4.21.1.1    # ipRouteDest: 라우팅 테이블 목적지 주소
+    - 1.3.6.1.2.1.4.21.1.7    # ipRouteNextHop: 라우팅 테이블 다음 홉
+    - 1.3.6.1.4.1.9.9.46.1.6.1.1.13    # vlanTrunkPortDynamicStatus: 트렁크 포트 상태
+    - 1.3.6.1.2.1.10.7.2.1.19    # ifLastChange: 인터페이스 마지막 변경 시간
+    - 1.3.6.1.4.1.9.2.2.1.1.28    # ciscoPortIfIndex: 포트 인터페이스 인덱스
+    - 1.3.6.1.4.1.9.9.13.1.5.1.3    # ciscoEnvMonSupplyStatusDescr: 전원 공급 설명
+    - 1.3.6.1.4.1.9.9.13.1.4.1.3    # ciscoEnvMonFanStatusDescr: 팬 상태 설명
+    - 1.3.6.1.4.1.9.9.13.1.6.1.3    # ciscoEnvMonLedStatusDescr: LED 상태 설명
+#    - 1.3.6.1.2.1.17.4.3.1.1    # dot1dTpFdbAddress: 브리지 테이블의 MAC 주소
+#    - 1.3.6.1.2.1.17.4.3.1.2    # dot1dTpFdbPort: 브리지 테이블의 포트 번호
+#    - 1.3.6.1.2.1.17.4.3.1.3    # dot1dTpFdbStatus: 브리지 테이블의 상태
+    - 1.3.6.1.2.1.4.22.1.1    # ipNetToMediaIfIndex: ARP 테이블의 인터페이스 인덱스
+    - 1.3.6.1.2.1.4.22.1.2    # ipNetToMediaPhysAddress: ARP 테이블의 물리 주소
+    - 1.3.6.1.2.1.4.22.1.3    # ipNetToMediaNetAddress: ARP 테이블의 네트워크 주소
+    - 1.3.6.1.2.1.4.22.1.4    # ipNetToMediaType: ARP 테이블의 타입
+    - 1.3.6.1.4.1.9.9.643.1.2.1.1.3    # CISCO-LB-REAL-SERVER-STATUS: 로드 밸런서 실제 서버 상태
+    - 1.3.6.1.4.1.9.9.43.1.3.1.1.6    # CISCO-HEALTH-CHECK-STATUS: 건강 상태 체크
+    - 1.3.6.1.2.1.4.21.1.9    # ipCidrRouteStatus: CIDR 라우트 상태
+    - 1.3.6.1.2.1.4.21.1.10    # ipRouteAge: 라우트 사용 시간
+#    - 1.3.6.1.2.1.17.2.15    # dot1dStpPortState: STP 포트 상태
+#    - 1.3.6.1.2.1.17.2.5    # dot1dStpTimeSinceTopologyChange: 마지막 토폴로지 변경 이후 경과 시간
+    - 1.3.6.1.4.1.9.9.187.1.1.2.1.1    # cRFStatusUnitId: 이중화 구성 유닛 ID
+    - 1.3.6.1.4.1.9.9.187.1.1.2.1.2    # cRFStatusUnitState: 이중화 구성 유닛 상태
+    - 1.3.6.1.2.1.6.13.1.4    # tcpConnState: TCP 연결 상태
+    - 1.3.6.1.2.1.5.29.1.3    # icmpInDestUnreachs: ICMP 목적지 도달 불가
+    - 1.3.6.1.4.1.9.9.41.1.1.1.1.6    # ciscoLogSeverity: 시스템 로그 심각도 (Fail, Error, Warning, Stop, Down)
+    - 1.3.6.1.2.1.10.7.2.1.20    # rptrPortAutoPartitionState: 리피터 포트 자동 분할 상태
+    - 1.3.6.1.4.1.9.9.117.1.1.1.1.5    # CISCO-FILE-SYSTEM-MIB: 디스크 사용량
+    - 1.3.6.1.4.1.9.9.117.1.1.1.1.6    # CISCO-FILE-SYSTEM-MIB: 디스크 여유 공간
+    - 1.3.6.1.2.1.31.1.1.1.6 # ifHCInOctets: interface 입력 btte
+    - 1.3.6.1.2.1.31.1.1.1.10 # ifHCOutOctets: interface 출력 byte
+    - 1.3.6.1.2.1.31.1.1.1.15 # ifHighSpeed: interface 최대 전송 속도
+    - 1.3.6.1.2.1.2.2.1.14 # ifInCRCErrors : interface 수신 CRC Error 개수
+    - 1.3.6.1.2.1.2.2.1.20 # ifOutCRCErrors : interface 전송 CRC Error 개수
+    - 1.3.6.1.4..1.2021.11 # ssCpuUser
+    - 1.3.6.1.4.1.2021.11.52.0
+    - 1.3.6.1.4.1.2021.11.53.0 # Idle CPU time
+    max_repetitions: 25
+    retries: 3
+    timeout: 5s
+
+    metrics:
+      - name: ssCpuUser
+        oid: 1.3.6.1.4.1.2021.11.50.0
+        type: gauge
+        help: "User CPU time"
+      - name: ssCpuSystem
+        oid: 1.3.6.1.4.1.2021.11.52.0
+        type: gauge
+        help: "System CPU time"
+      - name: ssCpuIdle
+        oid: 1.3.6.1.4.1.2021.11.53.0
+        type: gauge
+        help: "Idle CPU time"
+      - name: ifIndex
+        oid: 1.3.6.1.2.1.2.2.1.1
+        type: gauge
+        help: A unique value, greater than zero, for each interface - 1.3.6.1.2.1.2.2.1.1
+        indexes:
+        - labelname: ifIndex
+          type: gauge
+        lookups:
+        - labels:
+          - ifIndex
+          labelname: ifAlias
+          oid: 1.3.6.1.2.1.31.1.1.1.18
+          type: DisplayString
+        - labels:
+          - ifIndex
+          labelname: ifDescr
+          oid: 1.3.6.1.2.1.2.2.1.2
+          type: DisplayString
+        - labels:
+          - ifIndex
+          labelname: ifName
+          oid: 1.3.6.1.2.1.31.1.1.1.1
+          type: DisplayString
+
+      - name: ssCpuSystem
+        oid: 1.3.6.1.2.1.25.3.3.1.2
+        type: gauge
+        help: ssCpuSystem
+        indexes:
+          - labelname: ssCpuSystem
+            type: gauge
+
+
+      - name: ssCpuUser
+        oid: 1.3.6.1.4.1.9.9.109.1.1.1.1.6
+        type: gauge
+        help: ssCpuUser
+        indexes:
+          - labelname: ssCpuUser
+            type: gauge
+
+
+      - name: ifOutCRCErrors
+        oid: 1.3.6.1.2.1.2.2.1.20
+        type: gauge
+        help: interface 전송 CRC Error 개수
+        indexes:
+          - labelname: ifOutCRCErrors
+            type: gauge
+
+      - name: ifInCRCErrors
+        oid: 1.3.6.1.2.1.2.2.1.14
+        type: gauge
+        help: interface 수신 CRC Error 개수
+        indexes:
+          - labelname: ifInCRCErrors
+            type: gauge
+
+      - name: ifHighSpeed
+        oid: 1.3.6.1.2.1.31.1.1.1.15
+        type: gauge
+        help: interface 최대 전송 속도
+        indexes:
+          - labelname: ifHighSpeed
+            type: gauge
+
+      - name: ifHCOutOctets
+        oid: 1.3.6.1.2.1.31.1.1.1.10
+        type: gauge
+        help: interface 출력 정보
+        indexes:
+          - labelname: ifHCOutOctets
+            type: gauge
+
+      - name: ifHCInOctets
+        oid: 1.3.6.1.2.1.31.1.1.1.6
+        type: gauge
+        help: interface 입력 정보
+        indexes:
+          - labelname: ifHCInOctets
+            type: gauge
+
+      - name: sysUpTime
+        oid: 1.3.6.1.2.1.1.3
+        type: gauge
+        help: 시스템이 재시작된 이후 경과 시간
+        indexes:
+          - labelname: sysUpTime
+            type: gauge
+
+      - name: cpmCPUTotal5min
+        oid: 1.3.6.1.4.1.9.9.109.1.1.1.1.5
+        type: gauge
+        help: 5분 동안의 CPU 사용률
+        indexes:
+          - labelname: cpmCPUTotal5min
+            type: gauge
+
+      - name: ciscoMemoryPoolName
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.2
+        type: gauge
+        help: 메모리 풀의 이름
+        indexes:
+          - labelname: ciscoMemoryPoolName
+            type: gauge
+
+      - name: ciscoMemoryPoolUsed
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.5
+        type: gauge
+        help: 사용된 메모리 양
+        indexes:
+          - labelname: ciscoMemoryPoolUsed
+            type: gauge
+
+      - name: ciscoMemoryPoolFree
+        oid: 1.3.6.1.4.1.9.9.48.1.1.1.6
+        type: gauge
+        help: 사용 가능한 메모리 양
+        indexes:
+          - labelname: ciscoMemoryPoolFree
+            type: gauge
+
+      - name: ifType
+        oid: 1.3.6.1.2.1.2.2.1.3
+        type: gauge
+        help: 인터페이스 타입
+        indexes:
+          - labelname: ifType
+            type: gauge
+
+      - name: ifSpeed
+        oid: 1.3.6.1.2.1.2.2.1.5
+        type: gauge
+        help: 인터페이스 속도
+        indexes:
+          - labelname: ifSpeed
+            type: gauge
+
+      - name: ifAdminStatus
+        oid: 1.3.6.1.2.1.2.2.1.7
+        type: gauge
+        help: 인터페이스 관리 상태
+        indexes:
+          - labelname: ifAdminStatus
+            type: gauge
+
+      - name: ifOperStatus
+        oid: 1.3.6.1.2.1.2.2.1.8
+        type: gauge
+        help: 인터페이스 운영 상태
+        indexes:
+          - labelname: ifOperStatus
+            type: gauge
+
+      - name: ifInOctets
+        oid: 1.3.6.1.2.1.2.2.1.10
+        type: gauge
+        help: 수신 바이트 수
+        indexes:
+          - labelname: ifInOctets
+            type: gauge
+
+      - name: ifOutOctets
+        oid: 1.3.6.1.2.1.2.2.1.16
+        type: gauge
+        help: 송신 바이트 수
+        indexes:
+          - labelname: ifOutOctets
+            type: gauge
+
+      - name: ciscoEnvMonTemperatureStatusValue
+        oid: 1.3.6.1.4.1.9.9.13.1.3.1.3
+        type: gauge
+        help: 온도 센서 값
+        indexes:
+          - labelname: ciscoEnvMonTemperatureStatusValue
+            type: gauge
+
+      - name: ciscoEnvMonFanState
+        oid: 1.3.6.1.4.1.9.9.13.1.4.1.2
+        type: gauge
+        help: 팬 상태
+        indexes:
+          - labelname: ciscoEnvMonFanState
+            type: gauge
+
+      - name: ciscoEnvMonSupplyState
+        oid: 1.3.6.1.4.1.9.9.13.1.5.1.2
+        type: gauge
+        help: 전원 공급 상태
+        indexes:
+          - labelname: ciscoEnvMonSupplyState
+            type: gauge
+
+      - name: ipRouteDest
+        oid: 1.3.6.1.2.1.4.21.1.1
+        type: gauge
+        help: 라우팅 테이블 목적지 주소
+        indexes:
+          - labelname: ipRouteDest
+            type: gauge
+
+      - name: ipRouteNextHop
+        oid: 1.3.6.1.2.1.4.21.1.7
+        type: gauge
+        help: 라우팅 테이블 다음 홉
+        indexes:
+          - labelname: ipRouteNextHop
+            type: gauge
+
+      - name: vlanTrunkPortDynamicStatus
+        oid: 1.3.6.1.4.1.9.9.46.1.6.1.1.13
+        type: gauge
+        help: 트렁크 포트 상태
+        indexes:
+          - labelname: vlanTrunkPortDynamicStatus
+            type: gauge
+
+      - name: ifLastChange
+        oid: 1.3.6.1.2.1.10.7.2.1.19
+        type: gauge
+        help: 인터페이스 마지막 변경 시간
+        indexes:
+          - labelname: ifLastChange
+            type: gauge
+
+      - name: ciscoEnvMonSupplyStatusDescr
+        oid: 1.3.6.1.4.1.9.9.13.1.5.1.3
+        type: gauge
+        help: 전원 공급 설명
+        indexes:
+          - labelname: ciscoEnvMonSupplyStatusDescr
+            type: gauge
+
+      - name: ciscoEnvMonFanStatusDescr
+        oid: 1.3.6.1.4.1.9.9.13.1.4.1.3
+        type: gauge
+        help: 팬 상태 설명
+        indexes:
+          - labelname: ciscoEnvMonFanStatusDescr
+            type: gauge
+
+      - name: ciscoEnvMonLedStatusDescr
+        oid: 1.3.6.1.4.1.9.9.13.1.6.1.3
+        type: gauge
+        help: LED 상태 설명
+        indexes:
+          - labelname: ciscoEnvMonLedStatusDescr
+            type: gauge
+
+#      - name: dot1dTpFdbAddress
+#        oid: 1.3.6.1.2.1.17.4.3.1.1
+#        type: gauge
+#        help: 브리지 테이블의 MAC 주소
+#        indexes:
+#          - labelname: dot1dTpFdbAddress
+#            type: gauge
+
+#      - name: dot1dTpFdbPort
+#        oid: 1.3.6.1.2.1.17.4.3.1.2
+#        type: gauge
+#        help: 브리지 테이블의 포트 번호
+#        indexes:
+#          - labelname: dot1dTpFdbPort
+#            type: gauge
+
+#      - name: dot1dTpFdbStatus
+#        oid: 1.3.6.1.2.1.17.4.3.1.3
+#        type: gauge
+#        help: 브리지 테이블의 상태
+#        indexes:
+#          - labelname: dot1dTpFdbStatus
+#            type: gauge
+
+      - name: ciscoLBRealServerStatus
+        oid: 1.3.6.1.4.1.9.9.643.1.2.1.1.3
+        type: gauge
+        help: 로드 밸런서 실제 서버 상태
+        indexes:
+          - labelname: ciscoLBRealServerStatus
+            type: gauge
+
+      - name: ciscoHealthCheckStatus
+        oid: 1.3.6.1.4.1.9.9.43.1.3.1.1.6
+        type: gauge
+        help: 건강 상태 체크
+        indexes:
+          - labelname: ciscoHealthCheckStatus
+            type: gauge
+
+      - name: ipCidrRouteStatus
+        oid: 1.3.6.1.2.1.4.21.1.9
+        type: gauge
+        help: CIDR 라우트 상태
+        indexes:
+          - labelname: ipCidrRouteStatus
+            type: gauge
+
+      - name: ipRouteAge
+        oid: 1.3.6.1.2.1.4.21.1.10
+        type: gauge
+        help: 라우트 사용 시간
+        indexes:
+          - labelname: ipRouteAge
+            type: gauge
+
+#      - name: dot1dStpPortState
+#        oid: 1.3.6.1.2.1.17.2.15
+#        type: gauge
+#        help: STP 포트 상태
+#        indexes:
+#          - labelname: dot1dStpPortState
+#            type: gauge
+
+      - name: dot1dStpTimeSinceTopologyChange
+        oid: 1.3.6.1.2.1.17.2.5
+        type: gauge
+        help: 마지막 토폴로지 변경 이후 경과 시간
+        indexes:
+          - labelname: dot1dStpTimeSinceTopologyChange
+            type: gauge
+
+      - name: cRFStatusUnitId
+        oid: 1.3.6.1.4.1.9.9.187.1.1.2.1.1
+        type: gauge
+        help: 이중화 구성 유닛 ID
+        indexes:
+          - labelname: cRFStatusUnitId
+            type: gauge
+
+      - name: cRFStatusUnitState
+        oid: 1.3.6.1.4.1.9.9.187.1.1.2.1.2
+        type: gauge
+        help: 이중화 구성 유닛 상태
+        indexes:
+          - labelname: cRFStatusUnitState
+            type: gauge
+
+      - name: tcpConnState
+        oid: 1.3.6.1.2.1.6.13.1.4
+        type: gauge
+        help: TCP 연결 상태
+        indexes:
+          - labelname: tcpConnState
+            type: gauge
+
+      - name: icmpInDestUnreachs
+        oid: 1.3.6.1.2.1.5.29.1.3
+        type: gauge
+        help: ICMP 목적지 도달 불가
+        indexes:
+          - labelname: icmpInDestUnreachs
+            type: gauge
+
+      - name: ciscoLogSeverity
+        oid: 1.3.6.1.4.1.9.9.41.1.1.1.1.6
+        type: gauge
+        help: 시스템 로그 심각도 (Fail, Error, Warning, Stop, Down)
+        indexes:
+          - labelname: ciscoLogSeverity
+            type: gauge
+
+      - name: rptrPortAutoPartitionState
+        oid: 1.3.6.1.2.1.10.7.2.1.20
+        type: gauge
+        help: 리피터 포트 자동 분할 상태
+        indexes:
+          - labelname: rptrPortAutoPartitionState
+            type: gauge
+
+      - name: ciscoFileSystemDiskUsage
+        oid: 1.3.6.1.4.1.9.9.117.1.1.1.1.5
+        type: gauge
+        help: 디스크 사용량
+        indexes:
+          - labelname: ciscoFileSystemDiskUsage
+            type: gauge
+
+      - name: ciscoFileSystemDiskFree
+        oid: 1.3.6.1.4.1.9.9.117.1.1.1.1.6
+        type: gauge
+        help: 디스크 여유 공간
+        indexes:
+          - labelname: ciscoFileSystemDiskFree
+            type: gauge
