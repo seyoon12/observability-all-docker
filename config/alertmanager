@@ -1,0 +1,34 @@
+# default로 slack으로 구성. postfix 등의 메일 연계 솔루션을 통한 메일 알림 또한 가능
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'alert_type']
+  group_wait: 10m
+  group_interval: 10m
+  repeat_interval: 10m
+  routes:
+    - match:
+        alert_type: 'test'
+      receiver: 'default'
+      continue: true
+receivers:
+  - name: 'default'
+    slack_configs:
+      - channel: '#EXAMPLE_CHANNEL'
+        api_url: 'https://hooks.slack.com/services/FOR-UR SLACK-API
+        send_resolved: true
+        icon_url: '/etc/alertmanager/slack_icon.png'
+        title: |-
+          [{{ .CommonLabels.severity | toUpper }}] {{ .CommonLabels.alertname }}
+        text: >-
+          {{ range .Alerts -}}
+          {{ .Annotations.title }}
+
+          *Description:* {{ .Annotations.description }}
+
+          *Details:*
+            {{- range .Labels.SortedPairs -}}
+              {{- if not (or (eq .Name "instance") (eq .Name "job")) }}
+                • *{{ .Name }}:* `{{ .Value }}`
+              {{- end }}
+            {{- end }}
+          {{- end }}
