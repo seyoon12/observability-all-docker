@@ -1,0 +1,7 @@
+# 도커 네트워크 속도 향상을 위한 mac-vlan install (optional)
+docker swarm init --advertise-addr 10.0.2.15
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ingester-0
+ip link add lgtm_macvlan link enp0s8 type macvlan mode bridge
+ip addr add 192.168.2.10/24 dev lgtm_macvlan
+ifconfig lgtm_macvlan up
+sudo nmcli connection modify lgtm_macvlan connection.autoconnect yes
