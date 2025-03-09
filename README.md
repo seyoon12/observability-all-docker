@@ -1,5 +1,6 @@
-![image](https://github.com/user-attachments/assets/0447bc5d-4960-4a1e-b228-09e427fc27ef)# Docker Observability Stack
-includes:
+# Docker Observability Stack
+
+### includes:
 - **Prometheus**
 - **Grafana**
 - **Loki**
