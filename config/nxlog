@@ -1,0 +1,81 @@
+define ROOT     C:\Program Files\nxlog
+define LOGDIR   %ROOT%\data
+define LOGFILE  %LOGDIR%\nxlog.log
+
+Moduledir %ROOT%\modules
+CacheDir  %ROOT%\data
+Pidfile   %ROOT%\data\nxlog.pid
+SpoolDir  %ROOT%\data
+
+<Extension _syslog>
+    Module      xm_syslog
+</Extension>
+
+<Extension _charconv>
+    Module      xm_charconv
+    AutodetectCharsets iso8859-2, utf-8, utf-16, utf-32
+</Extension>
+
+<Extension _exec>
+    Module      xm_exec
+</Extension>
+
+<Extension _fileop>
+    Module      xm_fileop
+    <Schedule>
+        Every   1 hour
+        Exec    if (file_exists('%LOGFILE%') and \
+                   (file_size('%LOGFILE%') >= 5M)) \
+                    file_cycle('%LOGFILE%', 8);
+    </Schedule>
+    <Schedule>
+        When    @weekly
+        Exec    if file_exists('%LOGFILE%') file_cycle('%LOGFILE%', 8);
+    </Schedule>
+</Extension>
+
+<Input in_app>
+    Module      im_msvistalog
+    Query       <QueryList>\
+                    <Query Id="0" Path="Application">\
+                        <Select Path="Application">*[*]</Select>\
+                    </Query>\
+                </QueryList>
+</Input>
+
+<Input in_security>
+    Module      im_msvistalog
+    Query       <QueryList>\
+                    <Query Id="0" Path="Security">\
+                        <Select Path="Security">*[*]</Select>\
+                    </Query>\
+                </QueryList>
+</Input>
+
+<Input in_system>
+    Module      im_msvistalog
+    Query       <QueryList>\
+                    <Query Id="0" Path="System">\
+                        <Select Path="System">*[*]</Select>\
+                    </Query>\
+                </QueryList>
+</Input>
+
+<Output out>
+    Module      om_udp
+    Host        inser-ip
+    Port        514
+    Exec        to_syslog_snare();
+</Output>
+
+<Route 1>
+    Path        in_app => out
+</Route>
+
+<Route 2>
+    Path        in_security => out
+</Route>
+
+<Route 3>
+    Path        in_system => out
+</Route>
