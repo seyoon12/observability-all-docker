@@ -29,5 +29,4 @@ This setup includes:
 git clone https://github.com/your-username/docker-observability.git
 cd docker-observability
 ```
-
-<img src="https://github.com/user-attachments/assets/4d1bf6e9-1fe3-4da6-ae00-24763f8348e5" width="1200">
+<img src="https://github.com/user-attachments/assets/269da62f-6efa-45c2-a6e4-b46c20b49225" width="1200">
