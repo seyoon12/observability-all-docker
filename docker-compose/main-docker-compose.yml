@@ -12,7 +12,6 @@ x-logging: &default-logging
 x-minio-common: &minio-common
   image: minio/minio:RELEASE.2024-04-06T05-26-02Z
   command: server --console-address ":9001" http://minio{1...4}/data{1...2}
-  user: '0'
   expose:
     - "9000"
     - "9001"
@@ -30,7 +29,6 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.43.0
-
     restart: unless-stopped
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -250,7 +248,6 @@ services:
     image: nginx:1.25.5
     container_name: nginx-1
     restart: unless-stopped
-
     ports:
       - "440:440"
       - "441:441"
@@ -282,7 +279,6 @@ services:
     command: --housekeeping_interval=10s
 
   registry:
-
     image: registry:latest
     container_name: registry
     restart: unless-stopped
@@ -332,8 +328,8 @@ services:
   blackbox:
     image: prom/blackbox-exporter:v0.25.0
     container_name: snmp-exporter
-    ports:
-    - 9115:9115
+    expose:1
+      - "9115"
     command:
     - '--config.file=/etc/blackbox/blackbox.yml'
     - '--web.config.file=/etc/config/web.yml'
@@ -353,8 +349,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/lib/mysql/mysql.sock:/tmp/mysql.sock
-    ports:
-      - "9104:9104"
+    expose:
+      - "9104"
+
 
 volumes:
   tempo-data:
