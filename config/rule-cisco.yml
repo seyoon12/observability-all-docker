@@ -1,0 +1,130 @@
+groups:
+- name: snmp_exporter_alerts
+  rules:
+  - alert: Interface Down
+    expr: delta(ifOperStatus[15m]) != 0
+    for: 2m
+    labels:
+      severity: info
+    annotations:
+      summary: 인터페이스가 Down 되었습니다.
+
+  - alert: Host Up Time
+    expr: sysUpTime > 7776000000
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: 해당 장비의 사용시간이 2년이 경과하였습니다.
+
+  - alert: High Memory Utilisation Cisco
+    expr: 100 * (ciscoMemoryPoolUsed / (ciscoMemoryPoolUsed + ciscoMemoryPoolFree) ) > 85
+    for: 4m
+    labels:
+      severity: warning
+    annotations:
+      summary: 메모리 사용량이 85% 이상입니다.
+
+  - alert: Fan Status
+    expr: ciscoEnvMonFanState != 1
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: 팬에 이상이 생겼습니다. 확인이 필요합니다.
+
+  - alert: Power Supply Status
+    expr: ciscoEnvMonSupplyState != 1
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: 전력장치에 이상이 생겼습니다. 확인이 필요합니다.
+
+  - alert: High CPU Utilisation Cisco
+    expr: cpmCPUTotal5min > 90
+    for: 4m
+    labels:
+      severity: warning
+    annotations:
+      summary: CPU 사용량이 90%를 초과하였습니다.
+
+  - alert: High CRC Errors
+    expr: rate(ifInCRCErrors[4m]) > 3
+    for: 4m
+    labels:
+      severity: warning
+    annotations:
+      summary: CRC 에러가 4분 내에 3개 이상 발생하였습니다.
+
+  - alert: High Temperature
+    expr: ciscoEnvMonTemperatureStatus > 2
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: 장비의 온도가 비정상적으로 상승하였습니다. 점검이 필요합니다.
+
+  - alert: Low Free Disk Space
+    expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 시스템 디스크 사용량이 90%를 초과하였습니다.
+
+  - alert: Interface High Traffic Utilisation
+    expr: rate(ifHCInOctets[5m]) > 100000000 OR rate(ifHCOutOctets[5m]) > 100000000
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: 인터페이스의 트래픽 사용량이 과도하게 증가하였습니다.
+
+  - alert: Device Reboot Detected
+    expr: changes(sysUpTime[5m]) > 0
+    for: 1m
+    labels:
+      severity: info
+    annotations:
+      summary: 장비가 재부팅되었습니다. 원인을 확인하세요.
+
+  - alert: BGP Peer Down
+    expr: bgpPeerState != 6
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: BGP 피어 연결이 끊어졌습니다. 네트워크 상태를 점검하세요.
+
+  - alert: SNMP Agent Unreachable
+    expr: up == 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: SNMP 에이전트와 연결할 수 없습니다. 장비 상태를 확인하세요.
+
+  - alert: Excessive Packet Drops
+    expr: rate(ifOutDiscards[5m]) > 50 OR rate(ifInDiscards[5m]) > 50
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 패킷 드롭율이 비정상적으로 높습니다. 네트워크 상태를 점검하세요.
+
+  - alert: Excessive Broadcast Traffic
+    expr: rate(ifInBroadcastPkts[5m]) > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 브로드캐스트 패킷이 과도하게 증가하였습니다.
+
+  - alert: High Latency Detected
+    expr: probe_rtt > 0.1
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: 네트워크 응답 시간이 비정상적으로 증가하였습니다.
