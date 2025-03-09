@@ -180,7 +180,6 @@ services:
     image: nginx:1.25.5
     container_name: nginx-2
     restart: unless-stopped
-
     ports:
       - "50088:50080" # docker registry(optional)
       - "50089:50089" # docker registry(optional)
