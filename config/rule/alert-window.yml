@@ -1,0 +1,178 @@
+groups:
+- name: windows_exporter_alerts
+  rules:
+  - alert: WindowsServerCollectorError
+    expr: windows_exporter_collector_success == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: 윈도우 서버의 데이터 수집하는 동안 오류가 발생하였습니다.
+
+  - alert: WindowsServerServiceStatus
+    expr: windows_service_status{status="ok"} != 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: 윈도우 서버 상태가 비정상입니다.
+
+  - alert: WindowsServerCpuUsage
+    expr: 100 - (avg by (instance) (rate(windows_cpu_time_total{mode="idle"}[2m])) * 100) > 80
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 CPU 사용량이 80%를 초과했습니다.
+
+  - alert: WindowsServerMemoryUsage
+    expr: 100 - ((windows_os_physical_memory_free_bytes / windows_cs_physical_memory_bytes) * 100) > 90
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 메모리 사용량이 90%를 초과했습니다.
+
+  - alert: WindowsServerDiskSpaceUsage
+    expr: 100.0 - 100 * ((windows_logical_disk_free_bytes / 1024 / 1024 ) / (windows_logical_disk_size_bytes / 1024 / 1024)) > 80
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: 윈도우 서버의 디스크 사용량이 80%를 초과했습니다.
+
+  - alert: WindowsServerDiskReadLatency
+    expr: windows_logical_disk_read_seconds_total > 0.05
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 디스크 읽기 지연 시간이 50ms를 초과했습니다.
+
+  - alert: WindowsServerDiskWriteLatency
+    expr: windows_logical_disk_write_seconds_total > 0.05
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 디스크 쓰기 지연 시간이 50ms를 초과했습니다.
+
+  - alert: WindowsServerHighHandleCount
+    expr: windows_process_handle_count > 10000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 핸들 개수가 10,000개를 초과했습니다.
+
+  - alert: WindowsServerHighThreadCount
+    expr: windows_process_thread_count > 5000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 스레드 개수가 5000개를 초과했습니다.
+
+  - alert: WindowsServerNetworkHighUsage
+    expr: rate(windows_net_bytes_total[2m]) > 100000000
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 네트워크 사용량이 비정상적으로 높습니다.
+
+  - alert: WindowsServerNetworkErrors
+    expr: rate(windows_net_packets_received_errors_total[5m]) > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 네트워크 오류 패킷이 5분 동안 10개 이상 발생했습니다.
+
+  - alert: WindowsServerEventLogError
+    expr: windows_eventlog_errors_total > 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버에서 5분 동안 5개 이상의 오류 이벤트가 감지되었습니다.
+
+  - alert: WindowsServerBackupFailed
+    expr: windows_backup_last_result != 0
+    for: 1h
+    labels:
+      severity: critical
+    annotations:
+      summary: 윈도우 서버의 최근 백업이 실패했습니다.
+
+  - alert: WindowsServerHighSessionCount
+    expr: windows_terminal_services_sessions_total > 50
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 접속 세션이 50개를 초과했습니다.
+
+  - alert: WindowsServerLogonFailures
+    expr: windows_security_logon_failures_total > 5
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: 10분 동안 5회 이상의 로그인 실패가 발생했습니다.
+
+  - alert: WindowsServerRemoteDesktopConnectionFailure
+    expr: rate(windows_remote_desktop_login_failures_total[5m]) > 3
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 원격 데스크톱 로그인 실패가 5분 동안 3회 이상 발생했습니다.
+
+  - alert: WindowsServerPageFileUsage
+    expr: 100 * (windows_memory_paging_file_used_bytes / windows_memory_paging_file_total_bytes) > 75
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 페이지 파일 사용량이 75%를 초과했습니다.
+
+  - alert: WindowsServerHighHandleUsage
+    expr: windows_process_handle_count > 20000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버의 핸들 사용량이 20,000개를 초과했습니다.
+
+  - alert: WindowsServerSpoolerServiceStopped
+    expr: windows_service_status{service="Spooler"} == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: 프린트 스풀러 서비스가 중단되었습니다.
+
+  - alert: WindowsServerWMIServiceStopped
+    expr: windows_service_status{service="Winmgmt"} == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: WMI 서비스가 중단되었습니다.
+
+  - alert: WindowsServerUnexpectedShutdown
+    expr: windows_system_unexpected_shutdowns_total > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: 윈도우 서버가 예상치 못한 종료 상태입니다.
+
+  - alert: WindowsServerUptimeCheck
+    expr: windows_system_uptime < 600
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: 윈도우 서버가 최근 10분 이내에 다시 시작되었습니다.
