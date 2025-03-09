@@ -1,0 +1,63 @@
+# flask를 통한 contaienr autos-sclae을 위한 rule group (optional)
+groups:
+- name: loki_container_alerts
+  rules:
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="loki-ingester-0"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="loki-ingester-0"} / container_spec_memory_limit_bytes{name="loki-ingester-0"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
+
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="loki-ingester-1"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="loki-ingester-1"} / container_spec_memory_limit_bytes{name="loki-ingester-1"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
+
+  - alert: ContainerCPUUsageHigh
+    expr: (rate(container_cpu_usage_seconds_total{name="loki-ingester-2"}[5m]) * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High CPU usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% CPU for more than 1 minute."
+
+  - alert: ContainerMemoryUsageHigh
+    expr: (container_memory_usage_bytes{name="loki-ingester-2"} / container_spec_memory_limit_bytes{name="loki-ingester-2"} * 100) > 10
+    for: 1m
+    labels:
+      severity: warning
+      route: loki-scale
+    annotations:
+      summary: "High Memory usage detected for container {{ $labels.name }}"
+      description: "Container {{ $labels.name }} is using over 70% memory for more than 1 minute."
