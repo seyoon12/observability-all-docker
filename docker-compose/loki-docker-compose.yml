@@ -1,0 +1,135 @@
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+x-logging: &default-logging
+  driver: loki
+  options:
+    loki-url: 'https://loki-distributor:3100/api/prom/push'
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<time>\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},d{3}) (?P<message>(?s:.*))3970571'
+
+services:
+  loki-compactor:
+    container_name: loki-compactor
+    image: grafana/loki:2.8.0
+    command: "-config.file=/etc/loki/loki.yaml -target=compactor -config.expand-env=true"
+    logging: *logging
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    networks:
+      - home_default
+
+  loki-ingester-2:
+    container_name: loki-ingester-2
+    mem_limit: 2g
+    image: grafana/loki:2.8.0
+    environment:
+      LOKI_TARGET: ingester
+    command: "-config.file=/etc/loki/loki.yaml -target=ingester -config.expand-env=true"
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    logging: *logging
+    restart: always
+    networks:
+      - home_default
+
+  loki-ingester-1:
+    mem_limit: 2g
+    container_name: loki-ingester-1
+    image: grafana/loki:2.8.0
+    environment:
+      LOKI_TARGET: ingester
+    command: "-config.file=/etc/loki/loki.yaml -target=ingester -config.expand-env=true"
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    logging: *logging
+    restart: always
+    networks:
+      - home_default
+
+  loki-ingester-0:
+    mem_limit: 2g
+    container_name: loki-ingester-0
+    image: grafana/loki:2.8.0
+    environment:
+      LOKI_TARGET: ingester
+    command: "-config.file=/etc/loki/loki.yaml -target=ingester -config.expand-env=true"
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    logging: *logging
+    restart: always
+    networks:
+      - home_default
+
+  loki-distributor:
+    container_name: loki-distributor
+    image: grafana/loki:2.8.0
+    environment:
+      LOKI_TARGET: distributor
+    command: "-config.file=/etc/loki/loki.yaml -target=distributor -config.expand-env=true"
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    logging: *logging
+    networks:
+      - home_default
+
+  loki-querier:
+    container_name: loki-querier
+    image: grafana/loki:2.8.0
+    environment:
+      LOKI_TARGET: querier
+    command: "-config.file=/etc/loki/loki.yaml -target=querier -config.expand-env=true"
+    ports:
+      - "3100"
+    volumes:
+      - /home/config/loki/loki.yaml:/etc/loki/loki.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/:/etc/loki/
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    logging: *logging
+    networks:
+      - home_default
+
+networks:
+  home_default:
+    name: home_default
+    external: true
+volumes:
+  loki-compactor:
+  loki-distributor:
+  loki-ingester-0:
+  loki-ingester-1:
+  loki-ingester-2:
+  loki-querier:
