@@ -1,0 +1,203 @@
+# mac-vlan을 통한 tempo docker-compose를 예시로 추가함
+# 물리 네트워크 인터페이스를 사용하는 환경에서는 시도해 볼만한 함
+services:
+  tempo-distributor:
+    image: grafana/tempo:2.4.1
+    command: "-target=distributor -config.file=/etc/tempo.yaml"
+    container_name: tempo-distributor
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+    restart: unless-stopped
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+      - "4318"
+      - "7946"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.28
+
+
+  tempo-ingester-0:
+    mem_limit: 2g
+    image: grafana/tempo:2.4.1
+    command: "-target=ingester -config.file=/etc/tempo.yaml"
+    container_name: tempo-ingester-0
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+    restart: unless-stopped
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+      - "7946"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.27
+
+
+  tempo-ingester-1:
+    mem_limit: 2g
+    image: grafana/tempo:2.4.1
+    command: "-target=ingester -config.file=/etc/tempo.yaml"
+    container_name: tempo-ingester-1
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+    restart: unless-stopped
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+      - "7946"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.26
+
+
+  tempo-ingester-2:
+    mem_limit: 2g
+    image: grafana/tempo:2.4.1
+    command: "-target=ingester -config.file=/etc/tempo.yaml"
+    container_name: tempo-ingester-2
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+    restart: unless-stopped
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+      - "7946"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.25
+
+  tempo-querier:
+    image: grafana/tempo:2.4.1
+    command: "-target=querier -config.file=/etc/tempo.yaml -log.level=debug"
+    container_name: tempo-querier
+    restart: unless-stopped
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.24
+
+  tempo-compactor:
+    image: grafana/tempo:2.4.1
+    command: "-target=compactor -config.file=/etc/tempo.yaml"
+    container_name: tempo-compactor
+    restart: unless-stopped
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.23
+
+  tempo-metrics-generator:
+    image: grafana/tempo:2.4.1
+    command: "-target=metrics-generator -config.file=/etc/tempo.yaml"
+    container_name: tempo-metrics-generator
+    restart: unless-stopped
+    environment:
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.22
+
+  tempo-query-frontend:
+    image: grafana/tempo:2.4.1
+    command: "-target=query-frontend -config.file=/etc/tempo.yaml -log.level=debug"
+    restart: unless-stopped
+    environment:
+      - TEMPO_HTTP_TLS_CERT_FILE=/etc/public.crt
+      - TEMPO_HTTP_TLS_KEY_FILE=/etc/private.np.key
+      - TEMPO_HTTP_TLS_CA_FILE=/etc/ssl/certs/rootca.crt
+    container_name: tempo-query-frontend
+    volumes:
+      - /home/config/tempo/tempo.yaml:/etc/tempo.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /home/config/minio/certs/public.crt:/etc/public.crt
+      - /home/config/minio/certs/private.np.key:/etc/private.np.key
+      - /home/config/minio/certs/rootca.crt:/usr/local/share/ca-certificates/rootca.crt
+      - /home/config/minio/certs/rootca.crt:/etc/ssl/certs/rootca.crt
+    ports:
+      - "3200"
+      - "9095"
+    networks:
+      lgtm_macvlan:
+        ipv4_address: 192.168.2.21
+
+networks:
+  lgtm_macvlan:
+    name: lgtm_macvlan
+    driver: macvlan
+    driver_opts:
+      macvlan_mode: bridge
+      parent: enp0s8
+    ipam:
+      config:
+        - subnet: "192.168.0.0/16"
+          ip_range: "192.168.2.0/24"
+          gateway: "192.168.2.1"
