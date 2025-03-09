@@ -1,0 +1,87 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318  # OTLP HTTP 수신 포트
+      grpc:
+        endpoint: 0.0.0.0:4317  # OTLP gRPC 수신 포트
+
+processors:
+  batch:
+    send_batch_size: 1000  # 한 번에 보낼 데이터 개수
+    timeout: 10s  # 최대 대기 시간
+
+  memory_limiter:
+    limit_percentage: 75  # 전체 메모리의 75%를 사용하면 제한
+    spike_limit_percentage: 25  # 단기적 급증을 25%로 제한
+    check_interval: 10s  # 10초마다 메모리 상태 확인
+
+  attributes:  # 속성(Attribute)
+    actions:
+      - key: ip.address
+        action: insert
+        value: "example-ip"
+      - key: http.query
+        action: insert
+
+  resource:  # 리소스 속성 추가 (Loki 로그 태깅)
+    attributes:
+      - action: insert
+        key: loki.resource.labels
+        value: service.name
+
+exporters:
+  debug:  # 디버그 모드
+    verbosity: detailed
+
+  otlphttp: 
+    endpoint: https://example-ip:451  
+    tls:
+      cert_file: /etc/public.crt  
+      key_file: /etc/private.np.key  
+      ca_file: /etc/ssl/certs/rootca.crt  
+
+  prometheusremotewrite:
+    endpoint: https://example-ip:441/api/v1/write 
+    target_info:
+      enabled: true
+    tls:
+      cert_file: /etc/public.crt
+      key_file: /etc/private.np.key
+      ca_file: /etc/ssl/certs/rootca.crt
+
+  loki:
+    endpoint: https://example-ip:442/loki/api/v1/push
+    tls:
+      cert_file: /etc/public.crt
+      key_file: /etc/private.np.key
+      ca_file: /etc/ssl/certs/rootca.crt
+
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    tls:
+      cert_file: /etc/public.crt
+      key_file: /etc/private.np.key
+      ca_file: /etc/ssl/certs/rootca.crt
+
+extensions:
+  health_check:
+
+connectors:
+  spanmetrics:
+    dimensions:
+      - name: http.method
+      - name: http.status_code
+      - name: http.route
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [spanmetrics, otlphttp]  # Span 메트릭 및 OTLP HTTP로 전송
+
+    logs:
+      receivers: [otlp]
+      processors: []
+      exporters: [loki]  # Loki로 로그 전송
