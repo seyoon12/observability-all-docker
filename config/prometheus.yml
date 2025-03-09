@@ -9,7 +9,7 @@ scrape_configs:
       - targets:
           - ["INSERT-IP"]:9182
         labels:
-          hostname: 'int-erp-webapp'
+          hostname: 'EXAMPLE-WINDOW-NODE'
       - targets:
           - 'EXAMPLE-WINDOW-NODE'
         labels:
