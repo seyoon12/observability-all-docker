@@ -44,3 +44,6 @@ includes:
 ### TEMPO (3)
 ![image](https://github.com/user-attachments/assets/dcd3d36e-f675-4108-939a-4760955bae7d)
 
+### MINIO
+![image](https://github.com/user-attachments/assets/2d21879a-397b-427b-b3a3-40dd5a4c16cf)
+
