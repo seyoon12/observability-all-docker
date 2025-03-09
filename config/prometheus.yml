@@ -1,0 +1,172 @@
+global:
+  scrape_interval: 7s
+
+scrape_configs:
+  - job_name: EXAMPLE-WINDOW-NODE # WMI-EXPORTER 설정 필요요
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - ["INSERT-IP"]:9182
+        labels:
+          hostname: 'int-erp-webapp'
+      - targets:
+          - 'EXAMPLE-WINDOW-NODE'
+        labels:
+          hostname: 'EXAMPLE-WINDOW-NODE'
+    relabel_configs:
+      - source_labels: [hostname]
+        target_label: hostname
+        action: replace
+
+  - job_name: EXAMPLE-SUBNET(EXAMPLE-10.0.0.0/16)
+    metrics_path: /metrics
+    scheme: https
+    static_configs:
+      - targets:
+          - ["INSERT-IP"]
+        labels:
+          hostname: 'EXAMPLE-NODE'
+      - targets:
+          - ["INSERT-IP"]
+        labels:
+          hostname: 'EXAMPLE-NODE'
+    relabel_configs:
+      - source_labels: [hostname]
+        target_label: nodename
+        action: replace
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+  - job_name: 'tempo' # 각 CONTAINER METRIC 수집
+    static_configs:
+      - targets:
+        - 'tempo-distributor:3200'
+        - 'tempo-ingester-0:3200'
+        - 'tempo-ingester-1:3200'
+        - 'tempo-ingester-2:3200'
+        - 'tempo-querier:3200'
+        - 'tempo-compactor:3200'
+        - 'tempo-metrics-generator:3200'
+        - 'tempo-query-frontend:3200'
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+  - job_name: 'loki' # 각 CONTAINER METRIC 수집
+    metrics_path: /metrics
+    scheme: https
+    static_configs:
+      - targets:
+        - 'loki-distributor:3100'
+        - 'loki-ingester-0:3100'
+        - 'loki-ingester-1:3100'
+        - 'loki-ingester-2:3100'
+        - 'loki-querier:3100'
+        - 'loki-compactor:3100'
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+  - job_name: mimir # 각 CONTAINER METRIC 수집
+    scheme: https
+    static_configs:
+      - targets:
+        - 'mimir1:9009'
+        - 'mimir2:9009'
+        - 'mimir3:9009'
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+  - job_name: 'monitor' # FLASK를 통한 AUTO-SCALE을 위한 METRIC 수집 (OPTIONAL)
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    honor_labels: false
+    honor_timestamps: false
+    scheme: 'http'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'monitor'
+
+  - job_name: alertmanager
+    honor_labels: true
+    static_configs:
+      - targets: ["alertmanager:9093"]
+
+  - job_name: blackbox-WAS # BLACKBOX를 통한 수집 필요
+    metrics_path: /probe
+    scheme: https
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://EXAMPLE-APP:8080/login
+        labels:
+          hostname: 'EXAMPLE-APP'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: snmp-exporter:9115
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+  - job_name: "JENKINS"
+    metrics_path: "/prometheus"
+    scheme: http
+    static_configs:
+      - targets: ["JENKINS:18080"]
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key # JENKINS의 CICD RATE 값 수집 시 PROMETHEUS로 METRIC 값 수집 필요 / JENKINS에서 PROMETHEUS PLUGIN 설치 필요
+
+  - job_name: EXAMPLE_DB
+    scheme: http
+    static_configs:
+      - targets: ["EXAMPLE-DB:9104"] # MYSQL-EXPORTER 사용 시 PROMETHEUS로 METRIC 값 수집 필요
+
+  - job_name: "EXAMPLE-APP"
+    metrics_path: "/metrics"
+    scheme: https
+    static_configs:
+      - targets: ["INSERT-IP"]
+        labels:
+          hostname: 'EXAMPLE-APP'
+    relabel_configs:
+      - source_labels: [hostname]
+        target_label: nodename
+        action: replace
+    tls_config:  # TLS 설정이 필요한 경우 사용
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
+rule_files:
+  - "./rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+         - targets:
+              - 'alertmanager:9093'
+
+remote_write:
+  - url: https://nginx-1:443/api/v1/push
+    tls_config:
+      ca_file: /etc/prometheus/rootca.crt
+      cert_file: /etc/prometheus/public.crt
+      key_file: /etc/prometheus/private.np.key
+
