@@ -262,15 +262,11 @@ services:
       - "447:447"
       - "448:448"
       - "449:449"
-      - "50080:50080"
-      - "50081:50081"
     volumes:
       - ./config/nginx-1/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx-1/default.conf:/etc/nginx/conf.d/default.conf
       - ./config/minio/certs/:/etc/nginx/certs/
       - /etc/localtime:/etc/localtime:ro
-      - /home/rpm:/home/rpm
-      - /home/rpm2:/home/rpm2
 
 
   cadvisor:
