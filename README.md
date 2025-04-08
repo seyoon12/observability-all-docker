@@ -18,7 +18,7 @@ TEMPO, LOKI,MIMIR, MINIO 등 분산 아키텍처로 구성하여 데이터 복�
 - **fluentd**
 - **blackbox**
 - **open-telemetry-collector**
-- **open-telemetry-collector**
+- **open-telemetry.jar**
 
 ### 참고 사항
 1. 실 구축과 동일한 config 사용 시 해당 아키텍처의 중요 데이터 (예시: IP, API KEY) 등이 노출되기에 수정하였습니다.
